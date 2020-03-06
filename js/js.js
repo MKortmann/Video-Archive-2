@@ -507,13 +507,13 @@ document.querySelector("#submit").addEventListener("click", function(e) {
       icdABC[i] = "X";
     }
   }
+  const dsf0 = document.querySelector(".dsf0").checked;
   const dsf1 = document.querySelector(".dsf1").checked;
   const dsf2 = document.querySelector(".dsf2").checked;
   const dsf3 = document.querySelector(".dsf3").checked;
   const dsf4 = document.querySelector(".dsf4").checked;
-  const dsf5 = document.querySelector(".dsf5").checked;
   const alle = document.querySelector(".alle").checked;
-  const dsfS = [dsf1, dsf2, dsf3, dsf4, dsf5, alle];
+  const dsfS = [dsf0, dsf1, dsf2, dsf3, dsf4, alle];
   //adjusting the data to be displayed accordingly
   dsfS.forEach((item, index) => {
     if(item === true) {
@@ -620,3 +620,14 @@ function validateDsfS(dsfS) {
   ui.showAlert("Die Freigabe der Videoaufnahme dieses Patienten MUSS vorliegend sein", "error");
   return false;
 }
+
+/*adding eventlister to the checkboxALLE*/
+document.querySelector(".alle").addEventListener("input", () => {
+  if(document.querySelector(".alle").checked === true) {
+    document.querySelector(".dsf0").checked = true
+    document.querySelector(".dsf1").checked = true
+    document.querySelector(".dsf2").checked = true
+    document.querySelector(".dsf3").checked = true
+    document.querySelector(".dsf4").checked = true
+  }
+})
