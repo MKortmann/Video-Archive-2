@@ -99,6 +99,14 @@ class UI {
 
     if (globalCheckID[video.dateiName] === undefined) {
       globalCheckID[video.dateiName] = video.dateiName;
+      globalCheckID[video.id] = {
+        videoDate: video.videoDate,
+        patientName: video.patientName,
+        piz: video.piz,
+        icdABC: [video.icdABC[0], video.icdABC[1], video.icdABC[2]],
+        dsfS: [video.dsfS[0], video.dsfS[1], video.dsfS[2], video.dsfS[3], video.dsfS[4]],
+        leitungName: video.leitungName
+      }
     } else {
       //it will skip this video to avoid duplicate!
       this.showAlert("Dieses Video wurde bereits hochgeladen!", "error");
@@ -142,7 +150,7 @@ class UI {
       <td>${video.dsfS[3]}</td>
       <td>${video.dsfS[4]}</td>
       <td>${video.leitungName}</td>
-      <td>
+      <td class="reload">
         <img src="./icons/reload.svg"></img>
       </td>
       <td  class="delete">
@@ -164,6 +172,22 @@ class UI {
       // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
       // It basically load the localstorage to an variable, convert it to JSON and download it.
       Store.downloadVideosToJSON();
+    }
+  }
+  reloadVideoData(target) {
+    if (target.className === "reload") {
+      const id = target.parentNode.rowIndex;
+
+      //reorganizing the data before to upload
+      (function () {
+        var date = new Date().toISOString().substring(0, 10),
+            field = document.querySelector('.videoDate');
+        field.value = date
+        console.log(field.value);
+      })()
+      // document.querySelector(".videoDate").innerText = globalCheckID[id].videoDate;
+
+
     }
 
   }
@@ -445,7 +469,16 @@ document.querySelector(".toggleContainer").addEventListener("click", function() 
 document.addEventListener("DOMContentLoaded", () => {
   // const datum = ui.getActualDate();
   document.querySelector(".datum").innerText = ui.getActualDate();
-  Store.displayVideos()
+  Store.displayVideos();
+  //Load the input field with the actual date
+  //reorganizing the data before to upload
+  (function () {
+    var date = new Date().toISOString().substring(0, 10),
+        field = document.querySelector('.videoDate');
+    field.value = date
+    console.log(field.value);
+  })()
+
 });
 
 /* SUBMIT
@@ -521,7 +554,9 @@ document.querySelector("#submit").addEventListener("click", function(e) {
  */
 document.querySelector(".videoList").addEventListener("click", function(e) {
   ui.deleteVideo(e.target.parentElement);
+  ui.reloadVideoData(e.target.parentElement);
 });
+
 
 /*
 ***REGULAR EXPRESSIONS TO VALIDATE THE INPUT!!!!
