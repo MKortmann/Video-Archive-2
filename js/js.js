@@ -304,6 +304,8 @@ class Store {
     videos.forEach(function(item, index) {
       if (compareValue == index) {
         videos.splice(index, 1);
+        //deleting the video from global temporary storage
+        globalCheckID[item.dateiName] = undefined;
       };
     })
 
