@@ -1,0 +1,198 @@
+/* For color codes:
+https://www.quackit.com/css/css_color_codes.cfm */
+/*Part: 0: General Rules, starting from top of html to botton*/
+/*
+ * HEADER
+*/
+/* .logo {
+  max-width: 90px;
+  justify-content: left;
+  padding-bottom: 8px;
+}
+
+.icons {
+  max-width: 35px;
+  justify-content: left;
+  /* top, right, bottom, left */
+  padding: 0 5px 0 5px;
+  /* Adding filter to get the SICK LOGO (#097dbc) color */
+  filter: invert(34%) sepia(79%) saturate(841%) hue-rotate(166deg) brightness(98%) contrast(99%);
+} */
+
+h1 {
+  text-align: center;
+  color: firebrick;
+  color: #33C3F0;
+}
+
+/*h1 Second Style*/
+.decoText {
+  color: Black;
+  font-size: 4.2em;
+  font-weight: 600;
+  font-family: Helvetica;
+  /* text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0, 0, 0, .1), 0 0 5px rgba(0, 0, 0, .1), 0 1px 3px rgba(0, 0, 0, .3), 0 3px 5px rgba(0, 0, 0, .2), 0 5px 10px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .2), 0 20px 20px rgba(0, 0, 0, .15); */
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+/*
+ * Buttons: user interface
+*/
+.containerCheckbox {
+  display: flex;
+  align-items: center;
+}
+.noDisplay {
+  display: none;
+}
+.bContainer {
+  text-align: center;
+}
+.checkBoxCss {
+  width: 32px;
+  height: 26px;
+}
+.link {
+  text-decoration: none;
+  color: black
+}
+
+.openClose {
+  /* visibility: hidden; */
+  display: none;
+}
+
+/*
+ * Messages to the user
+*/
+/* used to be the X symbol. Used to detect when the user have clicked here */
+.delete {
+  color: red;
+  font-size: 2.5rem;
+  cursor: pointer;
+}
+
+/* standard for messages */
+.success,
+.error {
+  color: white;
+  font-size: 2.5rem;
+}
+
+/* success message */
+.success {
+  background: green;
+  /* background: #33C3F0; */
+  background: seaGreen;
+  text-align: center;
+}
+
+/* error message */
+.error {
+  background: red;
+  text-align: center;
+}
+
+/*
+ * FORM: input data
+*/
+.container {
+  max-width: 100%;
+}
+
+form {
+  margin-bottom: 0;
+}
+
+label {
+  font-size: 2.7rem;
+}
+
+input {
+  font-size: 2.0rem;
+}
+
+/* Making the video Date & Time format as from skeleton */
+.videoDate,
+.videoTime {
+  height: 38px;
+  padding: 6px 10px;
+  background-color: #fff;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+#submit {
+  font-size: 20px;
+  height: 50px;
+}
+
+/*
+ * TABLE: list of videos (we will use in fact flexbox here)
+*/
+table thead {
+  font-size: 2.0rem;
+  color: #33C3F0;
+  color: black;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #9da3b0;
+  background-color: #33C3F0;
+  /* font-weight: bold; */
+  /* color: white; */
+}
+
+tbody tr:nth-child(odd) {
+  background-color: white;
+  /* font-weight: bold; */
+}
+
+tbody tr {
+  font-size: 2.0rem;
+}
+
+tbody {
+  border: 1px solid black;
+}
+
+table,
+th,
+td {
+  border: 1px solid #33C3F0;
+  border: 1px solid saddlebrown;
+  border: 1px solid RosyBrown;
+  border: 1px solid Peru;
+  border: 1px solid RosyBrown;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+/* Flexbox was very important here to be able to let the video in the middle+
+center of the table */
+.videoFlex {
+  /* width: 320px; */
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-self: center;
+}
+
+/* we use flex 1 to be able to stretch the video! */
+td video {
+  flex: 1;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  text-align: center;
+  color: black;
+  /* border-top: 1px solid #33C3F0; */
+}
