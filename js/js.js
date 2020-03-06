@@ -97,22 +97,6 @@ class UI {
   //add video to the table
   addVideoToList(video, index) {
 
-    if (globalCheckID[video.dateiName] === undefined) {
-      globalCheckID[video.dateiName] = video.dateiName;
-      globalCheckID[video.id] = {
-        videoDate: video.videoDate,
-        patientName: video.patientName,
-        piz: video.piz,
-        icdABC: [video.icdABC[0], video.icdABC[1], video.icdABC[2]],
-        dsfS: [video.dsfS[0], video.dsfS[1], video.dsfS[2], video.dsfS[3], video.dsfS[4]],
-        leitungName: video.leitungName
-      }
-    } else {
-      //it will skip this video to avoid duplicate!
-      this.showAlert("Dieses Video wurde bereits hochgeladen!", "error");
-      return;
-    }
-
     const videoList = document.querySelector(".videoList");
     // Create tr element
     const row = document.createElement("tr");
@@ -128,6 +112,22 @@ class UI {
       id = index + 1;
       //update the total number of videos!
       document.querySelector(".numberTotalOfVideos").innerText = `: ${id}`;
+    }
+
+    if (globalCheckID[video.dateiName] === undefined) {
+      globalCheckID[video.dateiName] = video.dateiName;
+      globalCheckID[id] = {
+        videoDate: video.videoDate,
+        patientName: video.patientName,
+        piz: video.piz,
+        icdABC: [video.icdABC[0], video.icdABC[1], video.icdABC[2]],
+        dsfS: [video.dsfS[0], video.dsfS[1], video.dsfS[2], video.dsfS[3], video.dsfS[4]],
+        leitungName: video.leitungName
+      }
+    } else {
+      //it will skip this video to avoid duplicate!
+      this.showAlert("Dieses Video wurde bereits hochgeladen!", "error");
+      return;
     }
 
 
@@ -177,17 +177,18 @@ class UI {
   reloadVideoData(target) {
     if (target.className === "reload") {
       const id = target.parentNode.rowIndex;
-
-      //reorganizing the data before to upload
-      (function () {
-        var date = new Date().toISOString().substring(0, 10),
-            field = document.querySelector('.videoDate');
-        field.value = date
-        console.log(field.value);
-      })()
-      // document.querySelector(".videoDate").innerText = globalCheckID[id].videoDate;
-
-
+      document.querySelector(".videoDate").value = globalCheckID[id].videoDate;
+      document.querySelector(".patientName").value = globalCheckID[id].patientName;
+      document.querySelector(".piz").value = globalCheckID[id].piz;
+      document.querySelector(".leitungName").value = globalCheckID[id].leitungName;
+      document.querySelector(".icdA").value = globalCheckID[id].icdABC[0];
+      if(globalCheckID[id].icdABC[1] !== "X") document.querySelector(".icdB").value = globalCheckID[id].icdABC[1];
+      if(globalCheckID[id].icdABC[2] !== "X") document.querySelector(".icdC").value = globalCheckID[id].icdABC[2];
+      if(globalCheckID[id].dsfS[0] === "JA") {document.querySelector(".dsf0").checked = true}
+      if(globalCheckID[id].dsfS[1] === "JA") {document.querySelector(".dsf1").checked = true}
+      if(globalCheckID[id].dsfS[2] === "JA") {document.querySelector(".dsf2").checked = true}
+      if(globalCheckID[id].dsfS[3] === "JA") {document.querySelector(".dsf3").checked = true}
+      if(globalCheckID[id].dsfS[4] === "JA") {document.querySelector(".dsf4").checked = true}
     }
 
   }
