@@ -41,7 +41,14 @@ h1 {
 }
 .link {
   text-decoration: none;
-  color: black
+  color: red;
+  font-size: 1em;
+}
+
+.link:hover,
+.link.a:hover {
+  color: black;
+  font-size: 1.2em;
 }
 
 .openClose {
