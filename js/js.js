@@ -74,7 +74,9 @@ class Video {
 };
 //video object
 let video = new Video();
-
+//global object to check the video datei name. The same video should not be upload more
+//than 2 times.
+let globalCheckID = {};
 /**
  * Creates an UI object video with the necessary methods to manipulate the DOM.
  * @class
@@ -94,6 +96,14 @@ class UI {
   }
   //add video to the table
   addVideoToList(video, index) {
+
+    if (globalCheckID[video.dateiName] === undefined) {
+      globalCheckID[video.dateiName] = video.dateiName;
+    } else {
+      //it will skip this video to avoid duplicate!
+      this.showAlert("Dieses Video wurde bereits hochgeladen!", "error");
+      return;
+    }
 
     const videoList = document.querySelector(".videoList");
     // Create tr element
