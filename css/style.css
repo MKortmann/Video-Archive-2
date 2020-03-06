@@ -22,9 +22,11 @@ h1 {
   margin-bottom: 0;
 }
 
+
 /*
  * Buttons: user interface
 */
+
 .containerCheckbox {
   display: flex;
   align-items: center;
@@ -38,22 +40,44 @@ h1 {
 .checkBoxCss {
   width: 32px;
   height: 26px;
+  cursor: pointer;
 }
+
 .link {
   text-decoration: none;
   color: red;
   font-size: 1em;
 }
 
-.link:hover,
-.link.a:hover {
-  color: black;
+button:hover {
+  color: #0FA0CE;
   font-size: 1.2em;
 }
 
 .openClose {
   /* visibility: hidden; */
   display: none;
+}
+
+/*toolTip*/
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  font-size: 0.6em;
+  visibility: hidden;
+  color: #5cb85c;
+  text-align: left;
+  padding: 30px 0 0 0;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 
 /*

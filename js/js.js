@@ -159,7 +159,7 @@ class UI {
     //the message should disappear after 3 seconds
     setTimeout(function() {
       document.querySelector(".alert").remove();
-    }, 4000);
+    }, 6000);
   }
 
   //Writing the Date in the table in another format
@@ -446,11 +446,11 @@ document.querySelector("#submit").addEventListener("click", function(e) {
   video.getFormData(dateiName, videoDate, patientName, piz, icdABC, dsfS, leitungName);
 
   // Validate inputs
-  if (dateiName === "SELECT A VIDEO FILE") {
-    ui.showAlert("Please, select a video!", "error");
-  } else if (!validateDate(videoDate) || !validateName(patientName) || !validatePiz(piz)
-      || !validateIcdABC(icdABC)|| !validateDsfS(dsfS) || !validateName(leitungName)) {
-    ui.showAlert("Please, check your inputs!", "error");
+  if (dateiName === "VIDEO AUSWÄHLEN") {
+    ui.showAlert("Bitte wählen Sie ein Video!", "error");
+  } else if (!validateDate(videoDate) || !validateName("Patient Name") || !validatePiz(piz)
+      || !validateIcdABC(icdABC)|| !validateDsfS(dsfS) || !validateName("Leitung Name")) {
+    ui.showAlert("Bitte überprüfen Sie Ihre Eingaben!", "error");
   }  else {
     // Add video to the video list table
     ui.addVideoToList(video, "false");
@@ -499,9 +499,9 @@ document.querySelector(".videoList").addEventListener("click", function(e) {
 // }
 // patientName should be only carachters the firstname, lastname FORMAT!!!
 function validateName(Name) {
-  const re = /^([a-zA-Z]{3,10})\,[ ]([a-zA-Z]{3,10})$/;
+  const re = /^([a-zA-Z]{2,16})\,[ ]([a-zA-Z]{3,10})$/;
   if(!re.test(Name)) {
-    ui.showAlert("Please, your name should be written in this format: firstname, lastname! The first and lastname must be between 3 and 10 characters!", "error");
+    ui.showAlert(`Der ${Name} sollte in diesem Format geschrieben sein: Nachname, Vorname! Der Vor- und Nachname muss zwischen 2 und 16 Zeichen enthalten!`, "error");
   } else {
     return true;
   }
@@ -511,7 +511,7 @@ function validateDate(videoDate) {
   // We check this format here: "2019-07-05"
   const re = /^\d{4}[-]\d{2}[-]\d{2}$/;
   if(!re.test(videoDate)) {
-    ui.showAlert("Bitte, das Datum sollte im Format MM / TT / JJJJ sein", "error");
+    ui.showAlert("Das Datum sollte im Format MM / TT / JJJJ sein", "error");
   } else {
     return true;
   }
@@ -540,7 +540,7 @@ function validatePiz(piz) {
   */
   const re = /^[0-9]{8}$/;
   if(!re.test(piz)) {
-    ui.showAlert("Please, the piz number must be between 11111111 and 99999999", "error");
+    ui.showAlert("Die Piz-Nummer muss zwischen 11111111 und 99999999 liegen", "error");
   } else {
     return true;
   }
@@ -548,7 +548,7 @@ function validatePiz(piz) {
 //The video should not be upload if the icdA is empty... The icdB and icdC can be empty.
 function validateIcdABC(icdABC) {
   if(!icdABC[0] === undefined) {
-    ui.showAlert("Bitte, ICD_A sollte ausgefüllt werden", "error");
+    ui.showAlert("ICD_A sollte ausgefüllt werden", "error");
   } else {
     return true;
   }
@@ -557,7 +557,7 @@ function validateIcdABC(icdABC) {
 //is not checked
 function validateDsfS(dsfS) {
   if(dsfS.length === 0) {
-    ui.showAlert("Bitte, ICD_A sollte ausgefüllt werden", "error");
+    ui.showAlert("ICD_A sollte ausgefüllt werden", "error");
   } else {
     return true;
   }
