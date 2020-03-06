@@ -100,11 +100,11 @@ button:hover {
 /*
  * Messages to the user
 */
-/* used to be the X symbol. Used to detect when the user have clicked here */
-.delete {
-  color: red;
-  font-size: 2.5rem;
+/* used to be the ivon symbol. Used to detect when the user have clicked here */
+img {
   cursor: pointer;
+  height: 36px;
+  width: 48px;
 }
 
 /* standard for messages */

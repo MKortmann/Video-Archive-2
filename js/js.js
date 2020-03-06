@@ -142,7 +142,12 @@ class UI {
       <td>${video.dsfS[3]}</td>
       <td>${video.dsfS[4]}</td>
       <td>${video.leitungName}</td>
-      <td  class="delete">X</td>
+      <td>
+        <img src="./icons/reload.svg"></img>
+      </td>
+      <td  class="delete">
+        <img src="./icons/delete.svg"></img>
+      </td>
     `;
     //append element
     videoList.appendChild(row);
@@ -156,11 +161,11 @@ class UI {
       Store.removeVideo(target);
       // show the success message
       ui.showAlert(`Das Video wurde gelöscht!`, "success");
+      // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
+      // It basically load the localstorage to an variable, convert it to JSON and download it.
+      Store.downloadVideosToJSON();
     }
 
-    // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
-    // It basically load the localstorage to an variable, convert it to JSON and download it.
-    Store.downloadVideosToJSON();
   }
   // Clear the input fields
   clearFields() {
@@ -515,7 +520,7 @@ document.querySelector("#submit").addEventListener("click", function(e) {
  * Local Storage. In this case, will not be generate a JSON file.
  */
 document.querySelector(".videoList").addEventListener("click", function(e) {
-  ui.deleteVideo(e.target);
+  ui.deleteVideo(e.target.parentElement);
 });
 
 /*
