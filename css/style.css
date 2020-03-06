@@ -49,6 +49,13 @@ h1 {
   font-size: 1em;
 }
 
+.link.archiv {
+  color: #f0ad4e;
+  /* color: #5bc0de; */
+  /* color: #292b2c; */
+  /* color: #5cb85c; */
+}
+
 button:hover {
   color: #0FA0CE;
   font-size: 1.2em;
@@ -66,9 +73,10 @@ button:hover {
 }
 
 .tooltip .tooltiptext {
-  font-size: 0.6em;
+  font-size: 0.8em;
   visibility: hidden;
   color: #5cb85c;
+  /* color: #0FA0CE; */
   text-align: left;
   padding: 30px 0 0 0;
   /* Position the tooltip */

@@ -423,7 +423,7 @@ document.querySelector(".toggleContainer").addEventListener("click", function() 
 document.querySelector("#submit").addEventListener("click", function(e) {
 
   const videoDate = document.querySelector(".videoDate").value;
-  const patientName = document.querySelector(".patientName").value;
+  const patientName = document.querySelector(".patientName").value ;
   const piz = document.querySelector(".piz").value;
   const icdA = document.querySelector(".icdA").value;
   const icdB = document.querySelector(".icdB").value;
@@ -448,8 +448,8 @@ document.querySelector("#submit").addEventListener("click", function(e) {
   // Validate inputs
   if (dateiName === "VIDEO AUSWÄHLEN") {
     ui.showAlert("Bitte wählen Sie ein Video!", "error");
-  } else if (!validateDate(videoDate) || !validateName("Patient Name") || !validatePiz(piz)
-      || !validateIcdABC(icdABC)|| !validateDsfS(dsfS) || !validateName("Leitung Name")) {
+  } else if (!validateDate(videoDate) || !validateName(patientName) || !validatePiz(piz)
+      || !validateIcdABC(icdABC)|| !validateDsfS(dsfS) || !validateName(leitungName)) {
     ui.showAlert("Bitte überprüfen Sie Ihre Eingaben!", "error");
   }  else {
     // Add video to the video list table
@@ -477,28 +477,9 @@ document.querySelector(".videoList").addEventListener("click", function(e) {
 /*
 ***REGULAR EXPRESSIONS TO VALIDATE THE INPUT!!!!
 */
-// Validate functions to check the inputs: Using Regular expressions
-// ProjectName should be only carachters from min. 3 to max. 12.
-// function validateProjectName(projectName) {
-//   const re = /^[a-zA-Z]{3,12}$/;
-//   if(!re.test(projectName)) {
-//     ui.showAlert("Please, the project name must be between 3 and 12 characters", "error");
-//   } else {
-//     return true;
-//   }
-// }
-
-// videoTitle should be only carachters from min. 3 to max. 12.
-// function validateVideoTitle(videoTitle) {
-//   const re = /^[a-zA-Z]{3,10}$/;
-//   if(!re.test(videoTitle)) {
-//     ui.showAlert("Please, the video title must be between 3 and 10 characters", "error");
-//   } else {
-//     return true;
-//   }
-// }
 // patientName should be only carachters the firstname, lastname FORMAT!!!
 function validateName(Name) {
+  if (Name === "") { Name = "Patient Name und Leitung Name"};
   const re = /^([a-zA-Z]{2,16})\,[ ]([a-zA-Z]{3,10})$/;
   if(!re.test(Name)) {
     ui.showAlert(`Der ${Name} sollte in diesem Format geschrieben sein: Nachname, Vorname! Der Vor- und Nachname muss zwischen 2 und 16 Zeichen enthalten!`, "error");
@@ -516,18 +497,6 @@ function validateDate(videoDate) {
     return true;
   }
 }
-// NOT USING!
-// videoTime should be in the format dd:dd
-// function validateTime(videoTime) {
-//   // We check this format here: "01:01"
-//   const re = /^\d{2}[:]\d{2}$/;
-//   if(!re.test(videoTime)) {
-//     ui.showAlert("Please, the time should be in the format dd:dd", "error");
-//   } else {
-//     return true;
-//   }
-// }
-// videoTime should be in the format dd:dd
 // piz should have exactly 8 digits
 function validatePiz(piz) {
   // We check that the video number should have exactly 8 digits!
@@ -547,8 +516,8 @@ function validatePiz(piz) {
 }
 //The video should not be upload if the icdA is empty... The icdB and icdC can be empty.
 function validateIcdABC(icdABC) {
-  if(!icdABC[0] === undefined) {
-    ui.showAlert("ICD_A sollte ausgefüllt werden", "error");
+  if(icdABC[0] === "") {
+    ui.showAlert("Mindestens die ICD_A sollte ausgefüllt werden", "error");
   } else {
     return true;
   }
@@ -556,9 +525,12 @@ function validateIcdABC(icdABC) {
 //The video should not be upload if, at least, one of the fields of dsf1, dsf2...
 //is not checked
 function validateDsfS(dsfS) {
-  if(dsfS.length === 0) {
-    ui.showAlert("ICD_A sollte ausgefüllt werden", "error");
-  } else {
-    return true;
+  for(let i=0; i<dsfS.length; i++) {
+    if (dsfS[i] === true) {
+      return true;
+    } else {
+        ui.showAlert("Die Freigabe der Videoaufnahme dieses Patienten MUSS vorliegend sein", "error");
+        return false;
+    }
   }
 }
