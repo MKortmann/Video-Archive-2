@@ -11,6 +11,11 @@ h1 {
   color: #33C3F0;
 }
 
+h6 {
+  text-align: center;
+  color: #d9534f;
+}
+
 /*h1 Second Style*/
 .decoText {
   color: Black;

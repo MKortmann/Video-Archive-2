@@ -80,6 +80,18 @@ let video = new Video();
  * @class
  */
 class UI {
+  //get the actual date
+  getActualDate() {
+    //easiest way to get the date
+    const today = new Date();
+    let month = today.getMonth();
+    let day = today.getDate();
+    // we have to add one to the month because zero is january!
+    month++;
+    month = (month < 10) ? `0${month}` : month;
+    day = (day < 10) ? `0${day}` : day;
+    return `${day}.${month}.${today.getFullYear()}`;
+  }
   //add video to the table
   addVideoToList(video, index) {
 
@@ -92,9 +104,15 @@ class UI {
     // if is true, means that we have add a video and we need only to increment the last index number
     if (index === "false") {
       id = document.querySelector(".videoList").childElementCount + 1;
+      //update the total number of videos!
+      document.querySelector(".numberTotalOfVideos").innerText = `: ${id}`;
     } else {
       id = index + 1;
+      //update the total number of videos!
+      document.querySelector(".numberTotalOfVideos").innerText = `: ${id}`;
     }
+
+
 
     // Insert columns
     row.innerHTML = `
@@ -127,7 +145,7 @@ class UI {
       // remove it from the local Storage
       Store.removeVideo(target);
       // show the success message
-      ui.showAlert(`The video was deleted!`, "success");
+      ui.showAlert(`Das Video wurde gelöscht!`, "success");
     }
 
     // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
@@ -409,7 +427,11 @@ document.querySelector(".toggleContainer").addEventListener("click", function() 
  * It's a very important step. Here the localStorage will be retrieve and the table
  * list of videos will be filled.
  */
-document.addEventListener("DOMContentLoaded", Store.displayVideos());
+document.addEventListener("DOMContentLoaded", () => {
+  // const datum = ui.getActualDate();
+  document.querySelector(".datum").innerText = ui.getActualDate();
+  Store.displayVideos()
+});
 
 /* SUBMIT
  * It submit the form! Here is where the hole logic of this video archive starts.
