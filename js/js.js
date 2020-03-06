@@ -108,7 +108,7 @@ class UI {
       <td>${video.icdABC[0]}</td>
       <td>${video.icdABC[1]}</td>
       <td>${video.icdABC[2]}</td>
-      <td>${dsfS[0]}</td>
+      <td>${video.dsfS[0]}</td>
       <td>${video.dsfS[1]}</td>
       <td>${video.dsfS[2]}</td>
       <td>${video.dsfS[3]}</td>
@@ -409,7 +409,7 @@ document.querySelector(".toggleContainer").addEventListener("click", function() 
  * It's a very important step. Here the localStorage will be retrieve and the table
  * list of videos will be filled.
  */
-// document.addEventListener("DOMContentLoaded", Store.displayVideos());
+document.addEventListener("DOMContentLoaded", Store.displayVideos());
 
 /* SUBMIT
  * It submit the form! Here is where the hole logic of this video archive starts.
@@ -431,7 +431,7 @@ document.querySelector("#submit").addEventListener("click", function(e) {
   //adjusting the data to be readable
   for(let i=1; i<=2; i++) {
     if(icdABC[i] === "") {
-      icdABC[i] = "X"
+      icdABC[i] = "X";
     }
   }
   const dsf1 = document.querySelector(".dsf1").checked;
@@ -444,9 +444,9 @@ document.querySelector("#submit").addEventListener("click", function(e) {
   //adjusting the data to be displayed accordingly
   dsfS.forEach((item, index) => {
     if(item === true) {
-      _dsfS[index] = "JA"
+      dsfS[index] = "JA"
     } else {
-      _dsfS[index] = "NEIN"
+      dsfS[index] = "NEIN"
     }
   })
 
@@ -540,9 +540,8 @@ function validateDsfS(dsfS) {
   for(let i=0; i<dsfS.length; i++) {
     if (dsfS[i] === "JA") {
       return true;
-    } else {
-        ui.showAlert("Die Freigabe der Videoaufnahme dieses Patienten MUSS vorliegend sein", "error");
-        return false;
     }
   }
+  ui.showAlert("Die Freigabe der Videoaufnahme dieses Patienten MUSS vorliegend sein", "error");
+  return false;
 }
