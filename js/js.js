@@ -69,8 +69,7 @@ class Video {
     this.piz = piz;
     this.icdABC = icdABC;
     this.dsfS = dsfS;
-    //variables from the local video data
-    this.leitungName = "";
+    this.leitungName = leitungName;
   }
 };
 //video object
@@ -105,15 +104,15 @@ class UI {
       <td class="videoFlex"><video width="160" height="auto" controls><source src="./videos/${video.dateiName}" type="video/mp4"></video></td>
       <td>${video.videoDate}</td>
       <td>${video.patientName}</td>
+      <td>${video.piz}</td>
       <td>${video.icdABC[0]}</td>
       <td>${video.icdABC[1]}</td>
       <td>${video.icdABC[2]}</td>
-      <td>${this.dsfS[0]}</td>
-      <td>${this.dsfS[1]}</td>
-      <td>${this.dsfS[2]}</td>
-      <td>${this.dsfS[3]}</td>
-      <td>${this.dsfS[4]}</td>
-      <td>${this.dsfS[5]}</td>
+      <td>${dsfS[0]}</td>
+      <td>${video.dsfS[1]}</td>
+      <td>${video.dsfS[2]}</td>
+      <td>${video.dsfS[3]}</td>
+      <td>${video.dsfS[4]}</td>
       <td>${video.leitungName}</td>
       <td  class="delete">X</td>
     `;
@@ -138,8 +137,8 @@ class UI {
   // Clear the input fields
   clearFields() {
     // clearing the form!
-    document.querySelector(".form").reset();
-    document.querySelector(".openSelectVideoFile").innerText = "SELECT A VIDEO FILE";
+    // document.querySelector(".form").reset();
+    // document.querySelector(".openSelectVideoFile").innerText = "SELECT A VIDEO FILE";
   }
 
   showAlert(message, className) {
@@ -429,7 +428,12 @@ document.querySelector("#submit").addEventListener("click", function(e) {
   const icdB = document.querySelector(".icdB").value;
   const icdC = document.querySelector(".icdC").value;
   const icdABC = [icdA, icdB, icdC];
-
+  //adjusting the data to be readable
+  for(let i=1; i<=2; i++) {
+    if(icdABC[i] === "") {
+      icdABC[i] = "X"
+    }
+  }
   const dsf1 = document.querySelector(".dsf1").checked;
   const dsf2 = document.querySelector(".dsf2").checked;
   const dsf3 = document.querySelector(".dsf3").checked;
@@ -437,6 +441,14 @@ document.querySelector("#submit").addEventListener("click", function(e) {
   const dsf5 = document.querySelector(".dsf5").checked;
   const alle = document.querySelector(".alle").checked;
   const dsfS = [dsf1, dsf2, dsf3, dsf4, dsf5, alle];
+  //adjusting the data to be displayed accordingly
+  dsfS.forEach((item, index) => {
+    if(item === true) {
+      _dsfS[index] = "JA"
+    } else {
+      _dsfS[index] = "NEIN"
+    }
+  })
 
   const leitungName = document.querySelector(".leitungName").value;
 
@@ -526,7 +538,7 @@ function validateIcdABC(icdABC) {
 //is not checked
 function validateDsfS(dsfS) {
   for(let i=0; i<dsfS.length; i++) {
-    if (dsfS[i] === true) {
+    if (dsfS[i] === "JA") {
       return true;
     } else {
         ui.showAlert("Die Freigabe der Videoaufnahme dieses Patienten MUSS vorliegend sein", "error");
