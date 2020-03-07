@@ -113,6 +113,7 @@ class UI {
       //update the total number of videos!
       document.querySelector(".numberTotalOfVideos").innerText = `: ${id}`;
     }
+    video["id"] = id;
 
     if (globalCheckID[video.dateiName] === undefined) {
       globalCheckID[video.dateiName] = video.dateiName;
@@ -124,17 +125,15 @@ class UI {
         dsfS: [video.dsfS[0], video.dsfS[1], video.dsfS[2], video.dsfS[3], video.dsfS[4]],
         leitungName: video.leitungName
       }
+      video["notStoreSkip"] = false;
     } else {
       //it will skip this video to avoid duplicate!
       this.showAlert("Dieses Video wurde bereits hochgeladen!", "error");
-      return;
+      video["notStoreSkip"] = true;
     }
-
-
-
     // Insert columns
     row.innerHTML = `
-      <td>${id}</td>
+      <td>${video.id}</td>
       <td>${video.dateiName}</td>
       <!-- <td><video width="320" height="240" controls><source src="./videos/${video.videoName}" type="video/mp4"></video></td> -->
       <td class="videoFlex"><video width="160" height="auto" controls><source src="./videos/${video.dateiName}" type="video/mp4"></video></td>
@@ -538,16 +537,22 @@ document.querySelector("#submit").addEventListener("click", function(e) {
     ui.showAlert("Bitte überprüfen Sie Ihre Eingaben!", "error");
   }  else {
     // Add video to the video list table
+    let shouldWeAddTheVideo = true;
+
     ui.addVideoToList(video, "false");
-    // Add video to LocalStorage: it will load the local storage and push the new video
-    Store.addVideo(video);
-    // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
-    // It basically load the localstorage to an variable, convert it to JSON and download it.
-    Store.downloadVideosToJSON();
-    // Show sucess message
-    ui.showAlert(`Hallo ${video.leitungName}, das Video: ${video.dateiName} ist hochgeladen!`, "Erfolg");
-    // Clear Fields
-    ui.clearFields();
+    if (!video.notStoreSkip){
+      // Add video to LocalStorage: it will load the local storage and push the new video
+      Store.addVideo(video);
+      // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
+      // It basically load the localstorage to an variable, convert it to JSON and download it.
+      Store.downloadVideosToJSON();
+      // Show sucess message
+      ui.showAlert(`Hallo ${video.leitungName}, das Video: ${video.dateiName} ist hochgeladen!`, "Erfolg");
+      // Clear Fields
+      ui.clearFields();
+    }
+
+
   }
   e.preventDefault();
 });
