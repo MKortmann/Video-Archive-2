@@ -272,10 +272,14 @@ class Store {
 
   static displayVideos() {
     const videos = Store.getVideosFromLS();
-    //Looping through the videos and add it!
-    videos.forEach(function(item, index) {
-      ui.addVideoToList(item, index);
-    });
+    //Looping through the videos and add it in reverse order: it means that the
+    //new video will be display firstly!
+    for(let i=videos.length-1; i>=0; i--) {
+      ui.addVideoToList(videos[i], i);
+    }
+    // videos.forEach(function(item, index) {
+    //   ui.addVideoToList(item, index);
+    // });
 
     // IMPORTANT: here download the JSON file automatically in case there is no
     // video in the Local Storage!!!
