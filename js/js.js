@@ -106,12 +106,8 @@ class UI {
     // if is true, means that we have add a video and we need only to increment the last index number
     if (index === "false") {
       id = document.querySelector(".videoList").childElementCount + 1;
-      //update the total number of videos!
-      document.querySelector(".numberTotalOfVideos").innerText = `: ${id}`;
     } else {
       id = index + 1;
-      //update the total number of videos!
-      document.querySelector(".numberTotalOfVideos").innerText = `: ${id}`;
     }
     video["id"] = id;
 
@@ -277,6 +273,9 @@ class Store {
     for(let i=videos.length-1; i>=0; i--) {
       ui.addVideoToList(videos[i], i);
     }
+
+    //update the total number of videos!
+    document.querySelector(".numberTotalOfVideos").innerText = `${videos.length}`;
     // IMPORTANT: here download the JSON file automatically in case there is no
     // video in the Local Storage!!!
     //In case of a server you can always ignore IGNORE THE LOCAL STORAGE
@@ -308,6 +307,10 @@ class Store {
         videos.splice(index, 1);
         //deleting the video from global temporary storage
         globalCheckID[item.dateiName] = undefined;
+        //updating the number of total videos
+        //update the total number of videos!
+        let totalNumberOfVideos = parseInt(document.querySelector(".numberTotalOfVideos").innerText)-1;
+        document.querySelector(".numberTotalOfVideos").innerText = `${totalNumberOfVideos}`;
       };
     })
 
@@ -550,6 +553,9 @@ document.querySelector("#submit").addEventListener("click", function(e) {
 
     ui.addVideoToList(video, "false");
     if (!video.notStoreSkip){
+      //increment the number of videos in case of adding it
+      let totalNumberOfVideos = parseInt(document.querySelector(".numberTotalOfVideos").innerText)+1;
+      document.querySelector(".numberTotalOfVideos").innerText = `${totalNumberOfVideos}`;
       // Add video to LocalStorage: it will load the local storage and push the new video
       Store.addVideo(video);
       // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
