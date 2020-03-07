@@ -196,8 +196,8 @@ class UI {
   // Clear the input fields
   clearFields() {
     // clearing the form!
-    // document.querySelector(".form").reset();
-    // document.querySelector(".openSelectVideoFile").innerText = "SELECT A VIDEO FILE";
+    document.querySelector(".form").reset();
+    document.querySelector(".openSelectVideoFile").innerText = "SELECT A VIDEO FILE";
   }
 
   showAlert(message, className) {
@@ -277,10 +277,6 @@ class Store {
     for(let i=videos.length-1; i>=0; i--) {
       ui.addVideoToList(videos[i], i);
     }
-    // videos.forEach(function(item, index) {
-    //   ui.addVideoToList(item, index);
-    // });
-
     // IMPORTANT: here download the JSON file automatically in case there is no
     // video in the Local Storage!!!
     //In case of a server you can always ignore IGNORE THE LOCAL STORAGE
@@ -418,7 +414,9 @@ document.querySelector(".downloadVideoToJSON").addEventListener("click", functio
  */
 document.querySelector(".openSelectVideoFile").addEventListener("click", function() {
 
-  // open a file selection dialog
+  // open a file selection dialog: the folder path will be set always through the last
+  // added video. It is automatically and we cannot change here.
+  // Important: we need to get only the video data! 
   const input = document.createElement('input');
   input.type = 'file';
   // handle the selected file
@@ -487,7 +485,7 @@ document.addEventListener("DOMContentLoaded", () => {
     var date = new Date().toISOString().substring(0, 10),
         field = document.querySelector('.videoDate');
     field.value = date
-    console.log(field.value);
+    // console.log(field.value);
   })()
 
 });
