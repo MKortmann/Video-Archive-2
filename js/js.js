@@ -308,7 +308,8 @@ class Store {
 
     const videos = Store.getVideosFromLS();
     //minus 1 because the index start at zero and the ArchivNo. start at 1.
-    let compareValue = target.parentElement.cells[0].innerText - 1;
+    // let compareValue = target.parentElement.cells[0].innerText - 1;
+    let compareValue = target.parentElement.firstElementChild.innerText - 1;
 
     videos.forEach(function(item, index) {
       if (compareValue == index) {
