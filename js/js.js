@@ -386,7 +386,9 @@ class Store {
  * cleared!
  */
 document.querySelector(".loadTableFromJSON").addEventListener("click", function() {
-  //removing the old table!
+  //clearing the store data from local STORAGE
+  localStorage.clear();
+  globalCheckID = {};
   // document.querySelector(".videoList").remove();
   let taskList = document.querySelector(".videoList");
   if (taskList.children.length > 0) {
@@ -416,7 +418,7 @@ document.querySelector(".openSelectVideoFile").addEventListener("click", functio
 
   // open a file selection dialog: the folder path will be set always through the last
   // added video. It is automatically and we cannot change here.
-  // Important: we need to get only the video data! 
+  // Important: we need to get only the video data!
   const input = document.createElement('input');
   input.type = 'file';
   // handle the selected file
