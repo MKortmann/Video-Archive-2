@@ -304,25 +304,22 @@ class Store {
     const videos = Store.getVideosFromLS();
     //minus 1 because the index start at zero and the ArchivNo. start at 1.
     // let compareValue = target.parentElement.cells[0].innerText - 1;
-    let compareValue = target.parentElement.firstElementChild.innerText;
-
-    videos.forEach(function(item, index) {
-      if (compareValue == videos[index].id) {
-        videos.splice(index, 1);
-        //deleting the video from global temporary storage
-        globalCheckID[item.dateiName] = undefined;
-        //updating the number of total videos
-        //update the total number of videos!
-        let totalNumberOfVideos = parseInt(document.querySelector(".numberTotalOfVideos").innerText)-1;
-        document.querySelector(".numberTotalOfVideos").innerText = `${totalNumberOfVideos}`;
-      };
-    })
-
+    let index = target.parentElement.firstElementChild.innerText - 1;
+    //deleting the video from global temporary storage
+    globalCheckID[videos[index].dateiName] = undefined;
+    videos.splice(index, 1);
+    //updating the number of total videos
+    //update the total number of videos!
+    // let totalNumberOfVideos = parseInt(document.querySelector(".numberTotalOfVideos").innerText)-1;
+    document.querySelector(".numberTotalOfVideos").innerText = `${videos.length}`;
     //rewriting localStorage
     // localStorage.clear();
     localStorage.setItem("videos", JSON.stringify(videos));
     //deleting video from UI
     target.parentElement.remove();
+    //we need unfortunatelly at this point to refresh the page!
+    //here is where we need to optimize. For 1000 videos takes around 3 seconds to update
+    location.reload();
   }
 
   //in browser: it should download it direct to the storage folder! Important
@@ -376,7 +373,6 @@ class Store {
 
         // Storing the table in the Local Storage
         localStorage.setItem("videos", JSON.stringify(videos));
-
       }
     };
     xhttp.open("GET", "./storage/table.json", true);
@@ -598,9 +594,9 @@ document.querySelector(".videoList").addEventListener("click", function(e) {
 // patientName should be only carachters the firstname, lastname FORMAT!!!
 function validateName(Name) {
   if (Name === "") { Name = "Patient Name und Leitung Name"};
-  const re = /^([a-zA-Z]{2,16})\,[ ]([a-zA-Z]{3,10})$/;
+  const re = /^([a-zA-Z]{2,25})\,[ ]([a-zA-Z]{3,10})$/;
   if(!re.test(Name)) {
-    ui.showAlert(`Der ${Name} sollte in diesem Format geschrieben sein: Nachname, Vorname! Der Vor- und Nachname muss zwischen 2 und 16 Zeichen enthalten!`, "error");
+    ui.showAlert(`Der ${Name} sollte in diesem Format geschrieben sein: Nachname, Vorname! Der Vor- und Nachname muss zwischen 2 und 25 Zeichen enthalten!`, "error");
   } else {
     return true;
   }
