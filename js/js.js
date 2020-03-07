@@ -130,6 +130,8 @@ class UI {
       //it will skip this video to avoid duplicate!
       this.showAlert("Dieses Video wurde bereits hochgeladen!", "error");
       video["notStoreSkip"] = true;
+      //quiting
+      return;
     }
     // Insert columns
     row.innerHTML = `
@@ -314,6 +316,9 @@ class Store {
     localStorage.setItem("videos", JSON.stringify(videos));
   }
 
+  //in browser: it should download it direct to the storage folder! Important
+  //because here we do not have access to local storage and to simplify I do not
+  //want to use a backserver with Node.js that it is still an option!
   static downloadVideosToJSON() {
     // Save as file
     // trying to save it as a file
@@ -635,4 +640,10 @@ document.querySelector(".alle").addEventListener("input", () => {
     document.querySelector(".dsf3").checked = true
     document.querySelector(".dsf4").checked = true
   }
+})
+
+/*Admin an administrator password to login*/
+document.querySelector(".admin").addEventListener("click", () => {
+  document.querySelector(".loadTableFromJSON").classList.toggle("noDisplay");
+  document.querySelector(".downloadVideoToJSON").classList.toggle("noDisplay");
 })
