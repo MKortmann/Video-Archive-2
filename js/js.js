@@ -155,22 +155,25 @@ class UI {
       </td>
     `;
     //append element
-    videoList.appendChild(row);
+    // videoList.appendChild(row);
+    //appending the element in inverse order:
+    // videoList.insertAdjacentElement("beforebegin", row)
+    videoList.prepend(row);
   }
 
   deleteVideo(target) {
     if (target.className === "delete") {
-      // remove it from the memory
-      target.parentElement.remove();
       // remove it from the local Storage
       Store.removeVideo(target);
+      // remove it from the memory
+      target.parentElement.remove();
       // show the success message
       ui.showAlert(`Das Video wurde gelöscht!`, "success");
       // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
       // It basically load the localstorage to an variable, convert it to JSON and download it.
       Store.downloadVideosToJSON();
-      //reloading Homepage
-      location.reload();
+      //reloading Homepage: not best practice because it is two slow
+      // location.reload();
     }
   }
   reloadVideoData(target) {
@@ -195,7 +198,7 @@ class UI {
   clearFields() {
     // clearing the form!
     document.querySelector(".form").reset();
-    document.querySelector(".openSelectVideoFile").innerText = "SELECT A VIDEO FILE";
+    document.querySelector(".openSelectVideoFile").innerText = "VIDEO AUSWÄHLEN";
   }
 
   showAlert(message, className) {
@@ -272,9 +275,12 @@ class Store {
     const videos = Store.getVideosFromLS();
     //Looping through the videos and add it in reverse order: it means that the
     //new video will be display firstly!
-    for(let i=videos.length-1; i>=0; i--) {
-      ui.addVideoToList(videos[i], i);
-    }
+    // for(let i=videos.length-1; i>=0; i--) {
+    //   ui.addVideoToList(videos[i], i);
+    // }
+    videos.forEach((item, index) => {
+      ui.addVideoToList(item, index)
+    })
 
     //update the total number of videos!
     document.querySelector(".numberTotalOfVideos").innerText = `${videos.length}`;
@@ -568,7 +574,7 @@ document.querySelector("#submit").addEventListener("click", function(e) {
       // Clear Fields
       ui.clearFields();
       // reloading the Homepage
-      location.reload();
+      // location.reload();
     }
 
 
