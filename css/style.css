@@ -76,10 +76,10 @@ button:hover {
 }
 
 /*toolTip*/
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
+/* .tooltip {
+  /* position: relative;
+  display: inline-block; 
+} */
 
 .tooltip .tooltiptext {
   font-size: 0.8em;
