@@ -162,11 +162,10 @@ class UI {
   }
 
   deleteVideo(target) {
-    if (target.className === "delete") {
       // remove it from the local Storage
       Store.removeVideo(target);
-      // remove it from the memory
-      target.parentElement.remove();
+      // remove it from the memory: done in removeVideo function
+      // target.parentElement.remove();
       // show the success message
       ui.showAlert(`Das Video wurde gelöscht!`, "success");
       // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
@@ -174,10 +173,8 @@ class UI {
       Store.downloadVideosToJSON();
       //reloading Homepage: not best practice because it is two slow
       // location.reload();
-    }
   }
   reloadVideoData(target) {
-    if (target.className === "reload") {
       const id = target.parentNode.rowIndex;
       document.querySelector(".videoDate").value = globalCheckID[id].videoDate;
       document.querySelector(".patientName").value = globalCheckID[id].patientName;
@@ -191,8 +188,6 @@ class UI {
       if(globalCheckID[id].dsfS[2] === "JA") {document.querySelector(".dsf2").checked = true}
       if(globalCheckID[id].dsfS[3] === "JA") {document.querySelector(".dsf3").checked = true}
       if(globalCheckID[id].dsfS[4] === "JA") {document.querySelector(".dsf4").checked = true}
-    }
-
   }
   // Clear the input fields
   clearFields() {
@@ -309,10 +304,10 @@ class Store {
     const videos = Store.getVideosFromLS();
     //minus 1 because the index start at zero and the ArchivNo. start at 1.
     // let compareValue = target.parentElement.cells[0].innerText - 1;
-    let compareValue = target.parentElement.firstElementChild.innerText - 1;
+    let compareValue = target.parentElement.firstElementChild.innerText;
 
     videos.forEach(function(item, index) {
-      if (compareValue == index) {
+      if (compareValue == videos[index].id) {
         videos.splice(index, 1);
         //deleting the video from global temporary storage
         globalCheckID[item.dateiName] = undefined;
@@ -326,6 +321,8 @@ class Store {
     //rewriting localStorage
     // localStorage.clear();
     localStorage.setItem("videos", JSON.stringify(videos));
+    //deleting video from UI
+    target.parentElement.remove();
   }
 
   //in browser: it should download it direct to the storage folder! Important
@@ -373,6 +370,9 @@ class Store {
         videos.forEach(function(item, index) {
           ui.addVideoToList(item, index);
         });
+
+        //update the total number of videos!
+        document.querySelector(".numberTotalOfVideos").innerText = `${videos.length}`;
 
         // Storing the table in the Local Storage
         localStorage.setItem("videos", JSON.stringify(videos));
@@ -587,8 +587,8 @@ document.querySelector("#submit").addEventListener("click", function(e) {
  * Local Storage. In this case, will not be generate a JSON file.
  */
 document.querySelector(".videoList").addEventListener("click", function(e) {
-  ui.deleteVideo(e.target.parentElement);
-  ui.reloadVideoData(e.target.parentElement);
+  if (e.target.parentElement.className === "delete") ui.deleteVideo(e.target.parentElement)
+  if (e.target.parentElement.className === "reload") ui.reloadVideoData(e.target.parentElement)
 });
 
 
