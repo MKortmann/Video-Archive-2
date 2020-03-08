@@ -75,7 +75,7 @@ class Video {
 //video object
 let video = new Video();
 //global object to check the video datei name. The same video should not be upload more
-//than 2 times.
+//than 2 times. It is also used to reload the information as soon as we clicked!
 let globalCheckID = {};
 /**
  * Creates an UI object video with the necessary methods to manipulate the DOM.
@@ -100,20 +100,25 @@ class UI {
     const videoList = document.querySelector(".videoList");
     // Create tr element
     const row = document.createElement("tr");
-    // Video id
+
+    // const totalNumberOfVideos =  Store.getVideosFromLS(true);
     let id;
     // index tells if you start from 1 and go through the loop adding the ids
     // if is true, means that we have add a video and we need only to increment the last index number
     if (index === "false") {
-      id = document.querySelector(".videoList").childElementCount + 1;
+      // id = document.querySelector(".videoList").childElementCount + 1;
+      // Video id
+     // Get the total Number of Videos (true means: get only the total number of videos)
+      id = Store.getVideosFromLS(true) + 1;
     } else {
       id = index + 1;
     }
+
     video["id"] = id;
 
     if (globalCheckID[video.dateiName] === undefined) {
       globalCheckID[video.dateiName] = video.dateiName;
-      globalCheckID[id] = {
+      globalCheckID[video["id"]] = {
         videoDate: video.videoDate,
         patientName: video.patientName,
         piz: video.piz,
@@ -164,8 +169,8 @@ class UI {
   deleteVideo(target) {
       // remove it from the local Storage
       Store.removeVideo(target);
-      // remove it from the memory: done in removeVideo function
-      // target.parentElement.remove();
+      //deleting video from UI
+      target.parentElement.remove();
       // show the success message
       ui.showAlert(`Das Video wurde gelöscht!`, "success");
       // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
@@ -255,14 +260,15 @@ const ui = new UI();
  */
 class Store {
 
-  // Get Videos from LocalStorage
-  static getVideosFromLS() {
+  // Get Videos from LocalStorage or the total number of videos
+  static getVideosFromLS(getTotalNumberOfVideos = false) {
     let videos;
     if (localStorage.getItem("videos") === null) {
       videos = [];
     } else {
       videos = JSON.parse(localStorage.getItem("videos"));
     }
+    if (getTotalNumberOfVideos) return videos.length;
     return videos;
   }
 
@@ -297,6 +303,10 @@ class Store {
     // add to LocalStorage
     videos.push(video);
     localStorage.setItem("videos", JSON.stringify(videos));
+
+    // let obj = {};
+    // obj[video["dateiName"]] = video;
+
   }
 
   static removeVideo(target) {
@@ -315,8 +325,6 @@ class Store {
     //rewriting localStorage
     // localStorage.clear();
     localStorage.setItem("videos", JSON.stringify(videos));
-    //deleting video from UI
-    target.parentElement.remove();
     //we need unfortunatelly at this point to refresh the page!
     //here is where we need to optimize. For 1000 videos takes around 3 seconds to update
     location.reload();
@@ -554,13 +562,11 @@ document.querySelector("#submit").addEventListener("click", function(e) {
     ui.showAlert("Bitte überprüfen Sie Ihre Eingaben!", "error");
   }  else {
     // Add video to the video list table
-    let shouldWeAddTheVideo = true;
-
     ui.addVideoToList(video, "false");
     if (!video.notStoreSkip){
       //increment the number of videos in case of adding it
-      let totalNumberOfVideos = parseInt(document.querySelector(".numberTotalOfVideos").innerText)+1;
-      document.querySelector(".numberTotalOfVideos").innerText = `${totalNumberOfVideos}`;
+      // let totalNumberOfVideos = Store.getVideosFromLS(true);
+      document.querySelector(".numberTotalOfVideos").innerText = `${Store.getVideosFromLS(true)}`;
       // Add video to LocalStorage: it will load the local storage and push the new video
       Store.addVideo(video);
       // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
