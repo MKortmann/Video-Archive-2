@@ -417,6 +417,7 @@ class Store {
     xhttp.open("GET", "./storage/table.json", true);
 
     xhttp.onerror = function() {
+      alert("Please, restart the live-server!!!, Error on XMLHttpRequest")
       console.log("Request error in XMLHttpRequest...");
     }
     xhttp.send();
@@ -645,14 +646,17 @@ document.querySelector(".alle").addEventListener("input", () => {
   }
 })
 
+/*Menu - fast solution*/
 /*Admin an administrator password to login*/
 document.querySelector(".admin").addEventListener("click", () => {
-  let t1 = performance.now();
-  document.querySelector(".loadTableFromJSON").classList.toggle("noDisplay");
-  let t2 = performance.now();
-  console.log(`Load Table Time Elapsed: ${(t2-t1)/1000} seconds`);
-  document.querySelector(".downloadVideoToJSON").classList.toggle("noDisplay");
-  document.querySelector(".deleteAllVideos").classList.toggle("noDisplay");
+  let password = prompt("Please, enter the admin password");
+  if ( password === "wurzelAndroid!") {
+    document.querySelector(".deleteAllVideos").classList.toggle("noDisplay");
+    document.querySelector(".downloadVideoToJSON").classList.toggle("noDisplay");
+    document.querySelector(".loadTableFromJSON").classList.toggle("noDisplay");
+  } else {
+    alert("The password is not correct!");
+  }
 })
 
 //adding possibility to delete all the videos
