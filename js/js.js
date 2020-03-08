@@ -176,8 +176,6 @@ class UI {
       // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
       // It basically load the localstorage to an variable, convert it to JSON and download it.
       Store.downloadVideosToJSON();
-      //reloading Homepage: not best practice because it is two slow
-      // location.reload();
   }
   reloadVideoData(target) {
       const id = target.parentNode.rowIndex;
@@ -289,15 +287,7 @@ class Store {
 
     //update the total number of videos!
     document.querySelector(".numberTotalOfVideos").innerText = `${videos.length}`;
-    // IMPORTANT: here download the JSON file automatically in case there is no
-    // video in the Local Storage!!!
-    //In case of a server you can always ignore IGNORE THE LOCAL STORAGE
-    //AND DOWNLOAD FILES FROM JSON... TODO: CHECK IT!
-    // ////////////////////////////////////////////////////////////////////////////
-    // if(videos.length === 0) {
-    //   Store.loadJSON();
-    // }
-    // ///////////////////////////////////////////////////////////////////////////
+
   }
 
   // Add Video to localStorage: we get the stored videos, add the new (push), then
@@ -335,8 +325,8 @@ class Store {
     // Save as file
     // trying to save it as a file
     /*setting*/
-    let videos = Store.getVideosFromLS();
-    videos = Object.values(videos);
+    const videos = Store.getVideosFromLS();
+    // videos = Object.values(videos);
     const fileJSON = JSON.stringify(videos);
 
     // let dataUri = 'data:./storage/json;charset=utf-8,'+ encodeURIComponent(fileJSON);
@@ -368,18 +358,17 @@ class Store {
       if (this.status == 200) {
         // Convert the json to and object
         let videos = JSON.parse(xhttp.responseText);
-
-        //loading the table
-        //Looping through the videos and add it!
+        // Storing the table in the Local Storage
+        localStorage.setItem("videos", JSON.stringify(videos));
+        // converting it to an array!
+        videos = Object.values(videos)
+        //loading the table ui: looping through the videos and add it!
         videos.forEach(function(item, index) {
           ui.addVideoToList(item, index);
         });
 
         //update the total number of videos!
         document.querySelector(".numberTotalOfVideos").innerText = `${videos.length}`;
-
-        // Storing the table in the Local Storage
-        localStorage.setItem("videos", JSON.stringify(videos));
       }
     };
     xhttp.open("GET", "./storage/table.json", true);
@@ -574,8 +563,6 @@ document.querySelector("#submit").addEventListener("click", function(e) {
       ui.showAlert(`Hallo ${video.leitungName}, das Video: ${video.dateiName} ist hochgeladen!`, "Erfolg");
       // Clear Fields
       ui.clearFields();
-      // reloading the Homepage
-      // location.reload();
     }
 
 
