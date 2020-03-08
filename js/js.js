@@ -263,22 +263,26 @@ class Store {
   // Get Videos from LocalStorage or the total number of videos
   static getVideosFromLS(getTotalNumberOfVideos = false) {
     let videos;
+    // let obj = {};
+    // obj[video["dateiName"]] = video;
     if (localStorage.getItem("videos") === null) {
-      videos = [];
+      videos = {};
     } else {
       videos = JSON.parse(localStorage.getItem("videos"));
     }
-    if (getTotalNumberOfVideos) return videos.length;
+    if (getTotalNumberOfVideos) return Object.keys(videos).length;
     return videos;
   }
 
   static displayVideos() {
-    const videos = Store.getVideosFromLS();
+    let videos = Store.getVideosFromLS();
     //Looping through the videos and add it in reverse order: it means that the
     //new video will be display firstly!
     // for(let i=videos.length-1; i>=0; i--) {
     //   ui.addVideoToList(videos[i], i);
     // }
+    //removing the keys and converting it to an array, then we can loop through it
+    videos = Object.values(videos);
     videos.forEach((item, index) => {
       ui.addVideoToList(item, index)
     })
@@ -299,35 +303,29 @@ class Store {
   // Add Video to localStorage: we get the stored videos, add the new (push), then
   // set the localStorage again
   static addVideo(video) {
-    const videos = Store.getVideosFromLS();
+    let videos = Store.getVideosFromLS();
     // add to LocalStorage
-    videos.push(video);
+    videos[video["dateiName"]] = video;
     localStorage.setItem("videos", JSON.stringify(videos));
-
-    // let obj = {};
-    // obj[video["dateiName"]] = video;
-
   }
 
   static removeVideo(target) {
 
-    const videos = Store.getVideosFromLS();
-    //minus 1 because the index start at zero and the ArchivNo. start at 1.
-    // let compareValue = target.parentElement.cells[0].innerText - 1;
-    let index = target.parentElement.firstElementChild.innerText - 1;
+    let videos = Store.getVideosFromLS();
+    // videos = Object.values(videos);
+    let videoToDelete = target.parentElement.cells[1].innerText;
     //deleting the video from global temporary storage
-    globalCheckID[videos[index].dateiName] = undefined;
-    videos.splice(index, 1);
-    //updating the number of total videos
+    globalCheckID[videos[videoToDelete].dateiName] = undefined;
+    delete videos[videoToDelete];
     //update the total number of videos!
     // let totalNumberOfVideos = parseInt(document.querySelector(".numberTotalOfVideos").innerText)-1;
-    document.querySelector(".numberTotalOfVideos").innerText = `${videos.length}`;
+    document.querySelector(".numberTotalOfVideos").innerText = `${Object.keys(videos).length}`;
     //rewriting localStorage
     // localStorage.clear();
     localStorage.setItem("videos", JSON.stringify(videos));
     //we need unfortunatelly at this point to refresh the page!
     //here is where we need to optimize. For 1000 videos takes around 3 seconds to update
-    location.reload();
+    // location.reload();
   }
 
   //in browser: it should download it direct to the storage folder! Important
@@ -337,7 +335,8 @@ class Store {
     // Save as file
     // trying to save it as a file
     /*setting*/
-    const videos = Store.getVideosFromLS();
+    let videos = Store.getVideosFromLS();
+    videos = Object.values(videos);
     const fileJSON = JSON.stringify(videos);
 
     // let dataUri = 'data:./storage/json;charset=utf-8,'+ encodeURIComponent(fileJSON);
@@ -564,11 +563,10 @@ document.querySelector("#submit").addEventListener("click", function(e) {
     // Add video to the video list table
     ui.addVideoToList(video, "false");
     if (!video.notStoreSkip){
-      //increment the number of videos in case of adding it
-      // let totalNumberOfVideos = Store.getVideosFromLS(true);
-      document.querySelector(".numberTotalOfVideos").innerText = `${Store.getVideosFromLS(true)}`;
       // Add video to LocalStorage: it will load the local storage and push the new video
       Store.addVideo(video);
+      //increment the number of videos in case of adding it
+      document.querySelector(".numberTotalOfVideos").innerText = `${Store.getVideosFromLS(true)}`;
       // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
       // It basically load the localstorage to an variable, convert it to JSON and download it.
       Store.downloadVideosToJSON();
