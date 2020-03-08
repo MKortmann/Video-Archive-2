@@ -61,8 +61,40 @@ class Video {
     this.videoType = type;
   }
 
-  getFormData(dateiName="", videoDate = "", patientName = "", piz = "", icdABC = [],
-              dsfS=[], leitungName="") {
+  getFormData() {
+
+    const videoDate = document.querySelector(".videoDate").value;
+    const patientName = document.querySelector(".patientName").value ;
+    const piz = document.querySelector(".piz").value;
+    const icdA = document.querySelector(".icdA").value;
+    const icdB = document.querySelector(".icdB").value;
+    const icdC = document.querySelector(".icdC").value;
+    const icdABC = [icdA, icdB, icdC];
+    //adjusting the data to be readable
+    for(let i=1; i<=2; i++) {
+      if(icdABC[i] === "") {
+        icdABC[i] = "X";
+      }
+    }
+    const dsf0 = document.querySelector(".dsf0").checked;
+    const dsf1 = document.querySelector(".dsf1").checked;
+    const dsf2 = document.querySelector(".dsf2").checked;
+    const dsf3 = document.querySelector(".dsf3").checked;
+    const dsf4 = document.querySelector(".dsf4").checked;
+    const alle = document.querySelector(".alle").checked;
+    const dsfS = [dsf0, dsf1, dsf2, dsf3, dsf4, alle];
+    //adjusting the data to be displayed accordingly
+    dsfS.forEach((item, index) => {
+      if(item === true) {
+        dsfS[index] = "JA"
+      } else {
+        dsfS[index] = "NEIN"
+      }
+    })
+
+    const leitungName = document.querySelector(".leitungName").value;
+    const dateiName = document.querySelector(".openSelectVideoFile").innerText;
+
     this.dateiName = dateiName;
     this.videoDate = videoDate;
     this.patientName = patientName;
@@ -76,7 +108,8 @@ class Video {
 let video = new Video();
 //global object to check the video datei name. The same video should not be upload more
 //than 2 times. It is also used to reload the information as soon as we clicked!
-let globalCheckID = {};
+// globalDupAndLoadInf = global Variable For Duplicates and Used To Load Information To Input Fields
+let globalDupAndLoadInf = {};
 /**
  * Creates an UI object video with the necessary methods to manipulate the DOM.
  * @class
@@ -116,9 +149,9 @@ class UI {
 
     video["id"] = id;
 
-    if (globalCheckID[video.dateiName] === undefined) {
-      globalCheckID[video.dateiName] = video.dateiName;
-      globalCheckID[video["id"]] = {
+    if (globalDupAndLoadInf[video.dateiName] === undefined) {
+      globalDupAndLoadInf[video.dateiName] = video.dateiName;
+      globalDupAndLoadInf[video["id"]] = {
         videoDate: video.videoDate,
         patientName: video.patientName,
         piz: video.piz,
@@ -179,18 +212,18 @@ class UI {
   }
   reloadVideoData(target) {
       const id = target.parentNode.rowIndex;
-      document.querySelector(".videoDate").value = globalCheckID[id].videoDate;
-      document.querySelector(".patientName").value = globalCheckID[id].patientName;
-      document.querySelector(".piz").value = globalCheckID[id].piz;
-      document.querySelector(".leitungName").value = globalCheckID[id].leitungName;
-      document.querySelector(".icdA").value = globalCheckID[id].icdABC[0];
-      if(globalCheckID[id].icdABC[1] !== "X") document.querySelector(".icdB").value = globalCheckID[id].icdABC[1];
-      if(globalCheckID[id].icdABC[2] !== "X") document.querySelector(".icdC").value = globalCheckID[id].icdABC[2];
-      if(globalCheckID[id].dsfS[0] === "JA") {document.querySelector(".dsf0").checked = true}
-      if(globalCheckID[id].dsfS[1] === "JA") {document.querySelector(".dsf1").checked = true}
-      if(globalCheckID[id].dsfS[2] === "JA") {document.querySelector(".dsf2").checked = true}
-      if(globalCheckID[id].dsfS[3] === "JA") {document.querySelector(".dsf3").checked = true}
-      if(globalCheckID[id].dsfS[4] === "JA") {document.querySelector(".dsf4").checked = true}
+      document.querySelector(".videoDate").value = globalDupAndLoadInf[id].videoDate;
+      document.querySelector(".patientName").value = globalDupAndLoadInf[id].patientName;
+      document.querySelector(".piz").value = globalDupAndLoadInf[id].piz;
+      document.querySelector(".leitungName").value = globalDupAndLoadInf[id].leitungName;
+      document.querySelector(".icdA").value = globalDupAndLoadInf[id].icdABC[0];
+      if(globalDupAndLoadInf[id].icdABC[1] !== "X") document.querySelector(".icdB").value = globalDupAndLoadInf[id].icdABC[1];
+      if(globalDupAndLoadInf[id].icdABC[2] !== "X") document.querySelector(".icdC").value = globalDupAndLoadInf[id].icdABC[2];
+      if(globalDupAndLoadInf[id].dsfS[0] === "JA") {document.querySelector(".dsf0").checked = true}
+      if(globalDupAndLoadInf[id].dsfS[1] === "JA") {document.querySelector(".dsf1").checked = true}
+      if(globalDupAndLoadInf[id].dsfS[2] === "JA") {document.querySelector(".dsf2").checked = true}
+      if(globalDupAndLoadInf[id].dsfS[3] === "JA") {document.querySelector(".dsf3").checked = true}
+      if(globalDupAndLoadInf[id].dsfS[4] === "JA") {document.querySelector(".dsf4").checked = true}
   }
   // Clear the input fields
   clearFields() {
@@ -274,11 +307,6 @@ class Store {
 
   static displayVideos() {
     let videos = Store.getVideosFromLS();
-    //Looping through the videos and add it in reverse order: it means that the
-    //new video will be display firstly!
-    // for(let i=videos.length-1; i>=0; i--) {
-    //   ui.addVideoToList(videos[i], i);
-    // }
     //removing the keys and converting it to an array, then we can loop through it
     videos = Object.values(videos);
     videos.forEach((item, index) => {
@@ -305,7 +333,7 @@ class Store {
     // videos = Object.values(videos);
     let videoToDelete = target.parentElement.cells[1].innerText;
     //deleting the video from global temporary storage
-    globalCheckID[videos[videoToDelete].dateiName] = undefined;
+    globalDupAndLoadInf[videos[videoToDelete].dateiName] = undefined;
     delete videos[videoToDelete];
     //update the total number of videos!
     // let totalNumberOfVideos = parseInt(document.querySelector(".numberTotalOfVideos").innerText)-1;
@@ -392,7 +420,7 @@ class Store {
 document.querySelector(".loadTableFromJSON").addEventListener("click", function() {
   //clearing the store data from local STORAGE
   localStorage.clear();
-  globalCheckID = {};
+  globalDupAndLoadInf = {};
   // document.querySelector(".videoList").remove();
   let taskList = document.querySelector(".videoList");
   if (taskList.children.length > 0) {
@@ -447,42 +475,15 @@ document.querySelector(".toggleContainer").addEventListener("click", function() 
   }
 });
 
-
-// IMPOSSIBLE: IT'S BLOCKED! YOU CAN NOT RUN A BAT;EXE;CMD DATEI DIRECT FROM CLIENT
-// WE WILL NEED TO USE NODE.JS
-// document.querySelector(".runBat").addEventListener("click", function() {
-//   // var wshShell = new ActiveXObject("WScript.Shell");
-//   // wshShell.Run("C:\\Git_Repository\\Video-Archive\\bat\\run.bat");
-//
-//   // var oShell = WScript.CreateObject("WScript.Shell");
-//   // console.log(oShell);
-//   // oShell.Exec("start D:\dir\user.bat");
-//
-//   // <a href="#file.bat">Batch File</a>
-//
-//
-//   // let dataUri = 'data:./storage/json;charset=utf-8,'+ encodeURIComponent(fileJSON);
-//   // let dataUri = '#run.bat';
-//   let dataUri = 'run.cmd';
-//
-//   // let exportFileDefaultName = 'user.bat';
-//
-//   let linkElement = document.createElement('a');
-//   linkElement.setAttribute('href', dataUri);
-//   // linkElement.setAttribute('download', exportFileDefaultName);
-//   linkElement.click();
-//   linkElement.remove();
-//
-//   console.log("clicked!");
-//
-// });
-
-/* DOM Load Event: Initialization!
+ //EXECUTED BY EACH PAGE REFRESH/LOAD
+/* DOM Load Event: InitializatioN
  * It's a very important step. Here the localStorage will be retrieve and the table
  * list of videos will be filled.
  */
 document.addEventListener("DOMContentLoaded", () => {
-  // const datum = ui.getActualDate();
+  // getting the load time
+  let t1 = performance.now();
+  // get the actual data an displaying it!
   document.querySelector(".datum").innerText = ui.getActualDate();
   Store.displayVideos();
   //Load the input field with the actual date
@@ -494,6 +495,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // console.log(field.value);
   })()
 
+  let t2 = performance.now();
+  console.log(`Load Time Elapsed: ${(t2-t1)/1000} seconds`);
 });
 
 /* SUBMIT
@@ -505,52 +508,21 @@ document.addEventListener("DOMContentLoaded", () => {
  * 5) Clear all the input fields!
  */
 document.querySelector("#submit").addEventListener("click", function(e) {
-
-  const videoDate = document.querySelector(".videoDate").value;
-  const patientName = document.querySelector(".patientName").value ;
-  const piz = document.querySelector(".piz").value;
-  const icdA = document.querySelector(".icdA").value;
-  const icdB = document.querySelector(".icdB").value;
-  const icdC = document.querySelector(".icdC").value;
-  const icdABC = [icdA, icdB, icdC];
-  //adjusting the data to be readable
-  for(let i=1; i<=2; i++) {
-    if(icdABC[i] === "") {
-      icdABC[i] = "X";
-    }
-  }
-  const dsf0 = document.querySelector(".dsf0").checked;
-  const dsf1 = document.querySelector(".dsf1").checked;
-  const dsf2 = document.querySelector(".dsf2").checked;
-  const dsf3 = document.querySelector(".dsf3").checked;
-  const dsf4 = document.querySelector(".dsf4").checked;
-  const alle = document.querySelector(".alle").checked;
-  const dsfS = [dsf0, dsf1, dsf2, dsf3, dsf4, alle];
-  //adjusting the data to be displayed accordingly
-  dsfS.forEach((item, index) => {
-    if(item === true) {
-      dsfS[index] = "JA"
-    } else {
-      dsfS[index] = "NEIN"
-    }
-  })
-
-  const leitungName = document.querySelector(".leitungName").value;
-
-  //Check if you have selected a file
-  const dateiName = document.querySelector(".openSelectVideoFile").innerText;
-
-  video.getFormData(dateiName, videoDate, patientName, piz, icdABC, dsfS, leitungName);
+  const t1 = performance.now();
+  video.getFormData();
 
   // Validate inputs
-  if (dateiName === "VIDEO AUSWÄHLEN") {
+  if (video.dateiName === "VIDEO AUSWÄHLEN") {
     ui.showAlert("Bitte wählen Sie ein Video!", "error");
-  } else if (!validateDate(videoDate) || !validateName(patientName) || !validatePiz(piz)
-      || !validateIcdABC(icdABC)|| !validateDsfS(dsfS) || !validateName(leitungName)) {
+  } else if (video.dateiName.length > 20 || video.dateiName.length < 6) {
+    ui.showAlert(`Der Video Name: ${video.dateiName} muss zwischen 6 und 20 Zeichen enthalten!`, "error");
+  } else if (!validateDate(video.videoDate) || !validateName(video.patientName) || !validatePiz(video.piz)
+      || !validateIcdABC(video.icdABC)|| !validateDsfS(video.dsfS) || !validateName(video.leitungName)) {
     ui.showAlert("Bitte überprüfen Sie Ihre Eingaben!", "error");
   }  else {
     // Add video to the video list table
     ui.addVideoToList(video, "false");
+    //the video will be not add in case of duplicate!
     if (!video.notStoreSkip){
       // Add video to LocalStorage: it will load the local storage and push the new video
       Store.addVideo(video);
@@ -560,7 +532,7 @@ document.querySelector("#submit").addEventListener("click", function(e) {
       // It basically load the localstorage to an variable, convert it to JSON and download it.
       Store.downloadVideosToJSON();
       // Show sucess message
-      ui.showAlert(`Hallo ${video.leitungName}, das Video: ${video.dateiName} ist hochgeladen!`, "Erfolg");
+      ui.showAlert(`Hallo ${video.leitungName}, das Video: ${video.dateiName} ist hochgeladen!`, "success");
       // Clear Fields
       ui.clearFields();
     }
@@ -568,13 +540,19 @@ document.querySelector("#submit").addEventListener("click", function(e) {
 
   }
   e.preventDefault();
+
+  const t2 = performance.now();
+  console.log(`Submit Time Elapsed: ${(t2-t1)/1000} seconds.`)
 });
 /* DELETE THE VIDEO
  * If the user clicked in the X field, it will clear the video and update the
  * Local Storage. In this case, will not be generate a JSON file.
  */
 document.querySelector(".videoList").addEventListener("click", function(e) {
-  if (e.target.parentElement.className === "delete") ui.deleteVideo(e.target.parentElement)
+  let t1 = performance.now();
+  if (e.target.parentElement.className === "delete") ui.deleteVideo(e.target.parentElement);
+  let t2 = performance.now();
+  console.log(`Delete Time Elapsed: ${(t2-t1)/1000} seconds`);
   if (e.target.parentElement.className === "reload") ui.reloadVideoData(e.target.parentElement)
 });
 
@@ -585,9 +563,9 @@ document.querySelector(".videoList").addEventListener("click", function(e) {
 // patientName should be only carachters the firstname, lastname FORMAT!!!
 function validateName(Name) {
   if (Name === "") { Name = "Patient Name und Leitung Name"};
-  const re = /^([a-zA-Z]{2,25})\,[ ]([a-zA-Z]{3,10})$/;
+  const re = /^([a-zA-Z]{2,16})\,[ ]([a-zA-Z]{3,16})$/;
   if(!re.test(Name)) {
-    ui.showAlert(`Der ${Name} sollte in diesem Format geschrieben sein: Nachname, Vorname! Der Vor- und Nachname muss zwischen 2 und 25 Zeichen enthalten!`, "error");
+    ui.showAlert(`Der ${Name} sollte in diesem Format geschrieben sein: Nachname, Vorname! Der Vor- und Nachname muss zwischen 2 und 16 Zeichen enthalten!`, "error");
   } else {
     return true;
   }
@@ -652,6 +630,19 @@ document.querySelector(".alle").addEventListener("input", () => {
 
 /*Admin an administrator password to login*/
 document.querySelector(".admin").addEventListener("click", () => {
+  let t1 = performance.now();
   document.querySelector(".loadTableFromJSON").classList.toggle("noDisplay");
+  let t2 = performance.now();
+  console.log(`Load Table Time Elapsed: ${(t2-t1)/1000} seconds`);
   document.querySelector(".downloadVideoToJSON").classList.toggle("noDisplay");
+  document.querySelector(".deleteAllVideos").classList.toggle("noDisplay");
+})
+
+//adding possibility to delete all the videos
+document.querySelector(".deleteAllVideos").addEventListener("click", () => {
+  let t1 = performance.now();
+  localStorage.clear();
+  location.reload();
+  let t2 = performance.now();
+  console.log(`Clear Table & Load Page Time Elapsed: ${(t2-t1)/1000} seconds`);
 })
