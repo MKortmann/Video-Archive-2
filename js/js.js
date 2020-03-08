@@ -12,13 +12,18 @@
  * PART 1: INITIALIZATION/SETUP/STRUCTURE
  * Class Video: create an object for each video with the specific informations
  as datei name, video title, user name and so on.
+ * globalDupAndLoadInf it is a global object used to check duplicates and re-load
+ * user information in the input fields (Aufnahme Datum, Patient Name and so on).
  * Class UI: used to manipulate the DOM. Here we see important methods from the
  user interface as addVideoToList, deleteVideo, clearFields, showAlertMessage,
  new date format and so on.
  * Class Store: we use here static methods to be able to call it without instatiating
  the class. Used to store the data to Local Storage (LS) and also to JSON.
+ The Local Storage is used as the main store. By each new video or deleting a video
+ the local storage will be updated.
  We see here many important methods as: getVideosFromLS, retrieveVideosFromLS,
  addVideo, removeVideo, downloadVideosToJSON, loadJSON.
+ * So, by each modification it will be download a json file at the folder storage.
  * PART 2: User Interface Interaction/LOGIC
  * We see here eventListeners for the buttons as Select Videos, Submit and so on.
  * SUBMIT BUTTON: here is where start the hole logic. We first check if the User
@@ -44,7 +49,7 @@
  */
 class Video {
   constructor(dateiName = "", videoDate = "", patientName = "", piz = "", icdABC = [],
-              dsfS=[], leitungName="") {
+    dsfS = [], leitungName = "") {
     this.dateiName = dateiName;
     this.videoDate = videoDate;
     this.patientName = patientName;
@@ -64,15 +69,15 @@ class Video {
   getFormData() {
 
     const videoDate = document.querySelector(".videoDate").value;
-    const patientName = document.querySelector(".patientName").value ;
+    const patientName = document.querySelector(".patientName").value;
     const piz = document.querySelector(".piz").value;
     const icdA = document.querySelector(".icdA").value;
     const icdB = document.querySelector(".icdB").value;
     const icdC = document.querySelector(".icdC").value;
     const icdABC = [icdA, icdB, icdC];
     //adjusting the data to be readable
-    for(let i=1; i<=2; i++) {
-      if(icdABC[i] === "") {
+    for (let i = 1; i <= 2; i++) {
+      if (icdABC[i] === "") {
         icdABC[i] = "X";
       }
     }
@@ -85,7 +90,7 @@ class Video {
     const dsfS = [dsf0, dsf1, dsf2, dsf3, dsf4, alle];
     //adjusting the data to be displayed accordingly
     dsfS.forEach((item, index) => {
-      if(item === true) {
+      if (item === true) {
         dsfS[index] = "JA"
       } else {
         dsfS[index] = "NEIN"
@@ -141,7 +146,7 @@ class UI {
     if (index === "false") {
       // id = document.querySelector(".videoList").childElementCount + 1;
       // Video id
-     // Get the total Number of Videos (true means: get only the total number of videos)
+      // Get the total Number of Videos (true means: get only the total number of videos)
       id = Store.getVideosFromLS(true) + 1;
     } else {
       id = index + 1;
@@ -200,30 +205,40 @@ class UI {
   }
 
   deleteVideo(target) {
-      // remove it from the local Storage
-      Store.removeVideo(target);
-      //deleting video from UI
-      target.parentElement.remove();
-      // show the success message
-      ui.showAlert(`Das Video wurde gelöscht!`, "success");
-      // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
-      // It basically load the localstorage to an variable, convert it to JSON and download it.
-      Store.downloadVideosToJSON();
+    // remove it from the local Storage
+    Store.removeVideo(target);
+    //deleting video from UI
+    target.parentElement.remove();
+    // show the success message
+    ui.showAlert(`Das Video wurde gelöscht!`, "success");
+    // Save it to JSON: extra backup! After savingToLocalStorageTheJSON file will be downlaoded.
+    // It basically load the localstorage to an variable, convert it to JSON and download it.
+    Store.downloadVideosToJSON();
   }
   reloadVideoData(target) {
-      const id = target.parentNode.rowIndex;
-      document.querySelector(".videoDate").value = globalDupAndLoadInf[id].videoDate;
-      document.querySelector(".patientName").value = globalDupAndLoadInf[id].patientName;
-      document.querySelector(".piz").value = globalDupAndLoadInf[id].piz;
-      document.querySelector(".leitungName").value = globalDupAndLoadInf[id].leitungName;
-      document.querySelector(".icdA").value = globalDupAndLoadInf[id].icdABC[0];
-      if(globalDupAndLoadInf[id].icdABC[1] !== "X") document.querySelector(".icdB").value = globalDupAndLoadInf[id].icdABC[1];
-      if(globalDupAndLoadInf[id].icdABC[2] !== "X") document.querySelector(".icdC").value = globalDupAndLoadInf[id].icdABC[2];
-      if(globalDupAndLoadInf[id].dsfS[0] === "JA") {document.querySelector(".dsf0").checked = true}
-      if(globalDupAndLoadInf[id].dsfS[1] === "JA") {document.querySelector(".dsf1").checked = true}
-      if(globalDupAndLoadInf[id].dsfS[2] === "JA") {document.querySelector(".dsf2").checked = true}
-      if(globalDupAndLoadInf[id].dsfS[3] === "JA") {document.querySelector(".dsf3").checked = true}
-      if(globalDupAndLoadInf[id].dsfS[4] === "JA") {document.querySelector(".dsf4").checked = true}
+    const id = target.parentNode.rowIndex;
+    document.querySelector(".videoDate").value = globalDupAndLoadInf[id].videoDate;
+    document.querySelector(".patientName").value = globalDupAndLoadInf[id].patientName;
+    document.querySelector(".piz").value = globalDupAndLoadInf[id].piz;
+    document.querySelector(".leitungName").value = globalDupAndLoadInf[id].leitungName;
+    document.querySelector(".icdA").value = globalDupAndLoadInf[id].icdABC[0];
+    if (globalDupAndLoadInf[id].icdABC[1] !== "X") document.querySelector(".icdB").value = globalDupAndLoadInf[id].icdABC[1];
+    if (globalDupAndLoadInf[id].icdABC[2] !== "X") document.querySelector(".icdC").value = globalDupAndLoadInf[id].icdABC[2];
+    if (globalDupAndLoadInf[id].dsfS[0] === "JA") {
+      document.querySelector(".dsf0").checked = true
+    }
+    if (globalDupAndLoadInf[id].dsfS[1] === "JA") {
+      document.querySelector(".dsf1").checked = true
+    }
+    if (globalDupAndLoadInf[id].dsfS[2] === "JA") {
+      document.querySelector(".dsf2").checked = true
+    }
+    if (globalDupAndLoadInf[id].dsfS[3] === "JA") {
+      document.querySelector(".dsf3").checked = true
+    }
+    if (globalDupAndLoadInf[id].dsfS[4] === "JA") {
+      document.querySelector(".dsf4").checked = true
+    }
   }
   // Clear the input fields
   clearFields() {
@@ -475,7 +490,7 @@ document.querySelector(".toggleContainer").addEventListener("click", function() 
   }
 });
 
- //EXECUTED BY EACH PAGE REFRESH/LOAD
+//EXECUTED BY EACH PAGE REFRESH/LOAD
 /* DOM Load Event: InitializatioN
  * It's a very important step. Here the localStorage will be retrieve and the table
  * list of videos will be filled.
@@ -488,9 +503,9 @@ document.addEventListener("DOMContentLoaded", () => {
   Store.displayVideos();
   //Load the input field with the actual date
   //reorganizing the data before to upload
-  (function () {
+  (function() {
     var date = new Date().toISOString().substring(0, 10),
-        field = document.querySelector('.videoDate');
+      field = document.querySelector('.videoDate');
     field.value = date
     // console.log(field.value);
   })()
@@ -501,11 +516,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* SUBMIT
  * It submit the form! Here is where the hole logic of this video archive starts.
- * 1) Add Video To list (and update the ui)
- * 2) Store the Video to Local Storage
- * 3) Store the Video to a JSON file that will be direct downloaded. (Backup-Security)
- * 4) Show the success message
- * 5) Clear all the input fields!
+ * 0) Check Inputs
+ * 1) Check for duplicates
+ * 2) Add Video To list (and update the ui)
+ * 3) Store the Video to Local Storage
+ * 4) Store the Video to a JSON file that will be direct downloaded. (Backup-Security)
+ * 5) Show the success message
+ * 6) Clear all the input fields!
  */
 document.querySelector("#submit").addEventListener("click", function(e) {
   const t1 = performance.now();
@@ -516,14 +533,14 @@ document.querySelector("#submit").addEventListener("click", function(e) {
     ui.showAlert("Bitte wählen Sie ein Video!", "error");
   } else if (video.dateiName.length > 20 || video.dateiName.length < 6) {
     ui.showAlert(`Der Video Name: ${video.dateiName} muss zwischen 6 und 20 Zeichen enthalten!`, "error");
-  } else if (!validateDate(video.videoDate) || !validateName(video.patientName) || !validatePiz(video.piz)
-      || !validateIcdABC(video.icdABC)|| !validateDsfS(video.dsfS) || !validateName(video.leitungName)) {
+  } else if (!validateDate(video.videoDate) || !validateName(video.patientName) || !validatePiz(video.piz) ||
+    !validateIcdABC(video.icdABC) || !validateDsfS(video.dsfS) || !validateName(video.leitungName)) {
     ui.showAlert("Bitte überprüfen Sie Ihre Eingaben!", "error");
-  }  else {
+  } else {
     // Add video to the video list table
     ui.addVideoToList(video, "false");
     //the video will be not add in case of duplicate!
-    if (!video.notStoreSkip){
+    if (!video.notStoreSkip) {
       // Add video to LocalStorage: it will load the local storage and push the new video
       Store.addVideo(video);
       //increment the number of videos in case of adding it
@@ -536,7 +553,6 @@ document.querySelector("#submit").addEventListener("click", function(e) {
       // Clear Fields
       ui.clearFields();
     }
-
 
   }
   e.preventDefault();
@@ -556,15 +572,16 @@ document.querySelector(".videoList").addEventListener("click", function(e) {
   if (e.target.parentElement.className === "reload") ui.reloadVideoData(e.target.parentElement)
 });
 
-
 /*
-***REGULAR EXPRESSIONS TO VALIDATE THE INPUT!!!!
-*/
+ ***REGULAR EXPRESSIONS TO VALIDATE THE INPUT!!!!
+ */
 // patientName should be only carachters the firstname, lastname FORMAT!!!
 function validateName(Name) {
-  if (Name === "") { Name = "Patient Name und Leitung Name"};
+  if (Name === "") {
+    Name = "Patient Name und Leitung Name"
+  };
   const re = /^([a-zA-Z]{2,16})\,[ ]([a-zA-Z]{3,16})$/;
-  if(!re.test(Name)) {
+  if (!re.test(Name)) {
     ui.showAlert(`Der ${Name} sollte in diesem Format geschrieben sein: Nachname, Vorname! Der Vor- und Nachname muss zwischen 2 und 16 Zeichen enthalten!`, "error");
   } else {
     return true;
@@ -574,7 +591,7 @@ function validateName(Name) {
 function validateDate(videoDate) {
   // We check this format here: "2019-07-05"
   const re = /^\d{4}[-]\d{2}[-]\d{2}$/;
-  if(!re.test(videoDate)) {
+  if (!re.test(videoDate)) {
     ui.showAlert("Das Datum sollte im Format MM / TT / JJJJ sein", "error");
   } else {
     return true;
@@ -591,7 +608,7 @@ function validatePiz(piz) {
     $ - End here. Don't add anything after 8 digits.
   */
   const re = /^[0-9]{8}$/;
-  if(!re.test(piz)) {
+  if (!re.test(piz)) {
     ui.showAlert("Die Piz-Nummer muss zwischen 11111111 und 99999999 liegen", "error");
   } else {
     return true;
@@ -599,7 +616,7 @@ function validatePiz(piz) {
 }
 //The video should not be upload if the icdA is empty... The icdB and icdC can be empty.
 function validateIcdABC(icdABC) {
-  if(icdABC[0] === "") {
+  if (icdABC[0] === "") {
     ui.showAlert("Mindestens die ICD_A sollte ausgefüllt werden", "error");
   } else {
     return true;
@@ -608,7 +625,7 @@ function validateIcdABC(icdABC) {
 //The video should not be upload if, at least, one of the fields of dsf1, dsf2...
 //is not checked
 function validateDsfS(dsfS) {
-  for(let i=0; i<dsfS.length; i++) {
+  for (let i = 0; i < dsfS.length; i++) {
     if (dsfS[i] === "JA") {
       return true;
     }
@@ -619,7 +636,7 @@ function validateDsfS(dsfS) {
 
 /*adding eventlister to the checkboxALLE*/
 document.querySelector(".alle").addEventListener("input", () => {
-  if(document.querySelector(".alle").checked === true) {
+  if (document.querySelector(".alle").checked === true) {
     document.querySelector(".dsf0").checked = true
     document.querySelector(".dsf1").checked = true
     document.querySelector(".dsf2").checked = true
