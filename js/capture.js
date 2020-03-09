@@ -48,6 +48,7 @@ if (navigator.mediaDevices === undefined) {
     });
   }
 } else {
+  //give us a list of all enumerateDevices as webcam and microphones
   navigator.mediaDevices.enumerateDevices()
     .then(devices => {
       devices.forEach(device => {
@@ -62,7 +63,6 @@ if (navigator.mediaDevices === undefined) {
     //getUserMedia always as for user permission!
   navigator.mediaDevices.getUserMedia(constraints)
     .then( (stream)  => {
-
     /* use the stream */
     //connect the media stream to the first video element
     let video = document.querySelector("#video");
@@ -79,9 +79,10 @@ if (navigator.mediaDevices === undefined) {
     };
 
     //add listeners for saving video/audio
-    let start = document.querySelector('#btnStart');
-    let stop = document.querySelector('#btnStop');
-    let vidSave = document.querySelector('#vid2');
+    let start = document.querySelector("#btnStart");
+    let stop = document.querySelector("#btnStop");
+    let vidSave = document.querySelector("#vid2");
+    //using a media stream recorder api
     let mediaRecorder = new MediaRecorder(stream);
     let chunks = [];
 
@@ -93,6 +94,7 @@ if (navigator.mediaDevices === undefined) {
       mediaRecorder.stop();
       console.log(mediaRecorder.state);
     });
+    //storing the data on chunks
     mediaRecorder.ondataavailable = function(ev) {
       chunks.push(ev.data);
     }
@@ -100,6 +102,7 @@ if (navigator.mediaDevices === undefined) {
       let blob = new Blob(chunks, {
         'type': 'video/mp4;'
       });
+      //clearing the array to save memory
       chunks = [];
       let videoURL = window.URL.createObjectURL(blob);
       vidSave.src = videoURL;
