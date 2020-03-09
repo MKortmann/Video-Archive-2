@@ -1,13 +1,18 @@
 /*function to access the webcam*/
 
 //settings the parametters:
-let constraintObj = {
+//A MediaStreamConstraints obj especify the types of media to request, along with
+//any requirements for each type.
+let constraints = {
   audio: true,
   video: {
-    facingMode: "user",
+    facingMode: "user",  //get the front camera
+    // facingMode: { exact: "environment"}, //require the rear cameras
+    // deviceId: "???->add here your preferredCameraDeviceId", //setting a specific device
+    framerate: {ideal: 10, max: 15},
     width: {
       min: 640,
-      ideal: 1280,
+      ideal: 1280, //it means that the browser try to find the webcam that is nearest to ideal in case you have more than one
       max: 1920
     },
     height: {
@@ -25,9 +30,13 @@ let constraintObj = {
 //MeidaDevices.getUserMedia() method prompts the user for permission to use a
 //media input which produces a MediaStream with tracks containing the requested
 //types of media.
+
+//getUserMedia API can be used only in secure contexts! In insecure contexts it is
+//undefined. What is secure contexts?
+/*https, file:///, or localhost*/
 if (navigator.mediaDevices === undefined) {
   navigator.mediaDevices = {};
-  navigator.mediaDevices.getUserMedia = function(constraintObj) {
+  navigator.mediaDevices.getUserMedia = function(constraints) {
     let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia
     || navigator.msGetUserMedia || navigator.oGetUserMedia
     if (!getUserMedia) {
@@ -35,7 +44,7 @@ if (navigator.mediaDevices === undefined) {
     }
     // if everything runs fine, it returns a Promise that resolves to a MediaStream object.
     return new Promise(function(resolve, reject) {
-      getUserMedia.call(navigator, constraintObj, resolve, reject);
+      getUserMedia.call(navigator, constraints, resolve, reject);
     });
   }
 } else {
@@ -50,16 +59,18 @@ if (navigator.mediaDevices === undefined) {
       console.log(err.name, err.message);
     })
 }
+    //getUserMedia always as for user permission!
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then( (stream)  => {
 
-navigator.mediaDevices.getUserMedia(constraintObj)
-  .then( (mediaStreamObj) =>  {
+    /* use the stream */
     //connect the media stream to the first video element
     let video = document.querySelector("#video");
     if ("srcObject" in video) {
-      video.srcObject = mediaStreamObj;
+      video.srcObject = stream;
     } else {
       //old version (compatible)
-      video.src = window.URL.createObjectURL(mediaStreamObj);
+      video.src = window.URL.createObjectURL(stream);
     }
 
     video.onloadedmetadata = function(ev) {
@@ -68,10 +79,10 @@ navigator.mediaDevices.getUserMedia(constraintObj)
     };
 
     //add listeners for saving video/audio
-    let start = document.getElementById('btnStart');
-    let stop = document.getElementById('btnStop');
-    let vidSave = document.getElementById('vid2');
-    let mediaRecorder = new MediaRecorder(mediaStreamObj);
+    let start = document.querySelector('#btnStart');
+    let stop = document.querySelector('#btnStop');
+    let vidSave = document.querySelector('#vid2');
+    let mediaRecorder = new MediaRecorder(stream);
     let chunks = [];
 
     start.addEventListener('click', (ev) => {
@@ -94,6 +105,7 @@ navigator.mediaDevices.getUserMedia(constraintObj)
       vidSave.src = videoURL;
     }
   })
-  .catch(function(err) {
+    .catch( (err) => {
+    /* handle the error */
     console.log(err.name, err.message);
-  });
+  })
