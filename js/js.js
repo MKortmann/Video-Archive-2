@@ -566,11 +566,14 @@ document.querySelector("#submit").addEventListener("click", function(e) {
  * Local Storage. In this case, will not be generate a JSON file.
  */
 document.querySelector(".videoList").addEventListener("click", function(e) {
-  let t1 = performance.now();
-  if (e.target.parentElement.className === "delete") ui.deleteVideo(e.target.parentElement);
-  let t2 = performance.now();
-  console.log(`Delete Time Elapsed: ${(t2-t1)/1000} seconds`);
-  if (e.target.parentElement.className === "reload") ui.reloadVideoData(e.target.parentElement)
+  let answer = confirm("Möchten Sie das Video wirklich löschen?");
+  if (answer) {
+    let t1 = performance.now();
+    if (e.target.parentElement.className === "delete") ui.deleteVideo(e.target.parentElement);
+    let t2 = performance.now();
+    console.log(`Delete Time Elapsed: ${(t2-t1)/1000} seconds`);
+    if (e.target.parentElement.className === "reload") ui.reloadVideoData(e.target.parentElement)
+  }
 });
 
 /*
@@ -667,3 +670,30 @@ document.querySelector(".deleteAllVideos").addEventListener("click", () => {
   let t2 = performance.now();
   console.log(`Clear Table & Load Page Time Elapsed: ${(t2-t1)/1000} seconds`);
 })
+
+//event listener to run bat
+// document.querySelector(".runBat").addEventListener("click", () => {
+  // var wshShell = new ActiveXObject("WScript.Shell");
+// wshShell.Run("C:\\Git_Repository\\Video-Archive\\bat\\run.bat");
+
+// var oShell = WScript.CreateObject("WScript.Shell");
+// console.log(oShell);
+// oShell.Exec("start D:\dir\user.bat");
+
+// <a href="#file.bat">Batch File</a>
+
+
+// let dataUri = 'data:./storage/json;charset=utf-8,'+ encodeURIComponent(fileJSON);
+// let dataUri = '#run.bat';
+// let dataUri = 'run.cmd';
+//
+// // let exportFileDefaultName = 'user.bat';
+//
+// let linkElement = document.createElement('a');
+// linkElement.setAttribute('href', dataUri);
+// // linkElement.setAttribute('download', exportFileDefaultName);
+// linkElement.click();
+// linkElement.remove();
+//
+// console.log("clicked!");
+// })
